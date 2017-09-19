@@ -2,6 +2,7 @@
   <div id="app">
     <top></top>
     <router-view></router-view>
+    
     <player v-if="isshow"></player>
   </div>
 </template>
@@ -9,6 +10,7 @@
 <script>
 import top from "./components/top"
 import player from "./components/player"
+
 
 export default {
   name: 'app',
@@ -20,6 +22,7 @@ export default {
   components:{
     top,
     player
+    
   }
 }
 </script>
@@ -138,3 +141,4 @@ input, select {
     top: 44px;
 }
 </style>
+<style src="./assets/icon/iconfont.css"></style>
