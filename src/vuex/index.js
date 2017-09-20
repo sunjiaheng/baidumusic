@@ -1,6 +1,7 @@
 import Vuex from "vuex";
 import Vue from "vue";
-import {MUTATION_xglist,MUTATION_rglist,MUTATION_tjlist,MUTATION_rmgdlist} from "./mutationtype";
+import {MUTATION_xglist,MUTATION_rglist,MUTATION_tjlist,MUTATION_rmgdlist,MUTATION_artlist
+,MUTATION_area,MUTATION_sex,MUTATION_abc} from "./mutationtype";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -11,7 +12,11 @@ const store = new Vuex.Store({
     	rglist:[],
     	tjlist:[],
     	rmgdlist:[],
-    	artlist:{}
+    	artlist:{},
+    	currentname:"0-0-",
+    	area: 0,
+    	sex : 0,
+    	abc : "",
     },
     actions:{
     	//异步处理
@@ -44,14 +49,40 @@ const store = new Vuex.Store({
 		  		x = x.substring(0,x.lastIndexOf(")"))
 		  		store.commit(MUTATION_rmgdlist,JSON.parse(x).content)
 		  	})
-	  	}
+	  	},
+	  	//获取歌手列表
+	  	getartlist:(store,payload)=>{
+
+	  		var nowSecond = Date.parse(new Date());
+	  		axios.get("/v1/restserver/ting?from=webapp_music&method=baidu.ting.artist.getList&format=jsonp&callback=artist_getList&"
+	  			+"limit=20&order=1&area="+payload.area+"&sex="+payload.sex+"&abc="+payload.abc+"&offset="+payload.length+"&s_protocol=&_=1505866654987"+nowSecond).then(res=>{
+		  		//切割成合法字符串
+		  		var x = res.data.substring(15);
+		  		x = x.substring(0,x.lastIndexOf(")"))
+		  		var currentname = payload.area+"-"+payload.sex+"-"+payload.abc;
+		  		console.log("ccc"+ currentname)
+		  		store.commit(MUTATION_artlist,{name:currentname,data:JSON.parse(x).artist})
+
+		  	})
+	  	},
+
+	  	//设置地区,性别，abc
+	  	setarea:(store,payload)=>{
+	  		store.commit(MUTATION_area,payload)
+	  	},
+	  	setsex:(store,payload)=>{
+	  		store.commit(MUTATION_sex,payload)
+	  	},
+	  	setabc:(store,payload)=>{
+	  		store.commit(MUTATION_abc,payload)
+	  	},
+
 		  	
     	
     },
 	mutations:{
 		//这里是同步调用， 可以直接操作状态
 		[MUTATION_xglist]:(state,payload)=>{
-			console.log(state)
 			state.xglist = payload
 		},
 		[MUTATION_rglist]:(state,payload)=>{
@@ -62,11 +93,42 @@ const store = new Vuex.Store({
 		},
 		[MUTATION_rmgdlist]:(state,payload)=>{
 			state.rmgdlist = payload
+		},
+		[MUTATION_artlist]:(state,payload)=>{
+			// console.log(payload.name);
+			// state.artlist[payload.name]=payload.data;
+			state.currentname = payload.name;
+			var obj = {[payload.name]:payload.data}
+			state.artlist = {...state.artlist,...obj}
+			console.log(state.artlist)
+		},
+		[MUTATION_area]:(state,payload)=>{
+			state.area = payload;
+		},
+		[MUTATION_sex]:(state,payload)=>{
+			state.sex = payload;
+		},
+		[MUTATION_abc]:(state,payload)=>{
+			state.abc = payload;
 		}
 		
 	},
 	getters:{
 		//store的计算属性
+		getarea:(state)=>{
+			return state.area;
+		},
+		getsex:(state)=>{
+			return state.sex;
+		},
+		getabc:(state)=>{
+			return state.abc;
+		},
+		filterart:(state)=>{
+			console.log("filter");
+			console.log(state.artlist[state.currentname])
+			return state.artlist[state.currentname];
+		}
 	}
 })
 
