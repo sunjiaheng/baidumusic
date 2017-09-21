@@ -8,3 +8,7 @@ export const MUTATION_artlist = "artlist";
 export const MUTATION_area = "area";
 export const MUTATION_sex = "sex";
 export const MUTATION_abc = "abc";
+
+export const MUTATION_playmusic = "playmusic";
+
+

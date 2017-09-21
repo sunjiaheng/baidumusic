@@ -36,7 +36,7 @@
 		</ul>
 		<div class="container">
 			<ul :class="this.navonshow ==0?'on':''">
-				<li v-for="(data,index) in rglist" :key="data.album_id">
+				<li v-for="(data,index) in rglist" :key="data.album_id" @click="playclick(data.song_id)">
 					<div class="pic"><img :src="data.pic_small"><i>0{{index}}</i></div>
 					<div class="trend"></div>
 					<div class="play-state"></div>
@@ -127,6 +127,9 @@ export default {
   methods:{
   	navclick:function(index){
   		this.navonshow = index
+  	},
+  	playclick:function(index){
+  		this.$store.dispatch("getplaymusic",index)
   	}
   }
 }
@@ -157,8 +160,15 @@ export default {
 	    	box-sizing: border-box;
 	    	padding: 0 5px 10px;
 	    	.pic{
+	    		width:100%;
+	    		height: 0;
+	    		padding-bottom: 100%;
+	    		background:url("../assets/load.jpg") no-repeat;
+	    		background-size:100% 100%;
+	    		
 	    		img{
 	    			width:100%;
+	    			
 	    		}
 	    	}
 	    	.title{
@@ -224,6 +234,7 @@ export default {
 				.pic{
 					position:relative;
 					width:45px;
+
 					margin-right:8px;
 					img{
 						width:100%;

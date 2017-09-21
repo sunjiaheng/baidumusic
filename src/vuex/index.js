@@ -1,7 +1,7 @@
 import Vuex from "vuex";
 import Vue from "vue";
 import {MUTATION_xglist,MUTATION_rglist,MUTATION_tjlist,MUTATION_rmgdlist,MUTATION_artlist
-,MUTATION_area,MUTATION_sex,MUTATION_abc} from "./mutationtype";
+,MUTATION_area,MUTATION_sex,MUTATION_abc,MUTATION_playmusic} from "./mutationtype";
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
@@ -17,6 +17,7 @@ const store = new Vuex.Store({
     	area: 0,
     	sex : 0,
     	abc : "",
+    	playmusic:""
     },
     actions:{
     	//异步处理
@@ -54,13 +55,21 @@ const store = new Vuex.Store({
 	  	getartlist:(store,payload)=>{
 
 	  		var nowSecond = Date.parse(new Date());
+	  		var currentname = payload.area+"-"+payload.sex+"-"+payload.abc;
+	  		var offsetlength = 0;
+	  		console.log(store.state.artlist[currentname] != undefined)
+	  		if(store.state.artlist[currentname] != undefined){
+	  				offsetlength = store.state.artlist[currentname].length
+	  				console.log(offsetlength)
+	  		}
+		  		
 	  		axios.get("/v1/restserver/ting?from=webapp_music&method=baidu.ting.artist.getList&format=jsonp&callback=artist_getList&"
-	  			+"limit=20&order=1&area="+payload.area+"&sex="+payload.sex+"&abc="+payload.abc+"&offset="+payload.length+"&s_protocol=&_=1505866654987"+nowSecond).then(res=>{
+	  			+"limit=20&order=1&area="+payload.area+"&sex="+payload.sex+"&abc="+payload.abc+"&offset="+offsetlength+"&s_protocol=&_=1505866654987"+nowSecond).then(res=>{
 		  		//切割成合法字符串
 		  		var x = res.data.substring(15);
 		  		x = x.substring(0,x.lastIndexOf(")"))
-		  		var currentname = payload.area+"-"+payload.sex+"-"+payload.abc;
-		  		console.log("ccc"+ currentname)
+		  		
+		  		// console.log(store.state.artlist.currentname)
 		  		store.commit(MUTATION_artlist,{name:currentname,data:JSON.parse(x).artist})
 
 		  	})
@@ -77,6 +86,16 @@ const store = new Vuex.Store({
 	  		store.commit(MUTATION_abc,payload)
 	  	},
 
+	  	getplaymusic:(store,payload)=>{
+	  		// console.log(payload)
+			axios.get("/v1/restserver/ting?method=baidu.ting.song.playAAC&songid="+payload).then(res=>{
+				store.commit(MUTATION_playmusic,res.data.bitrate.file_link)
+				// console.log(res)
+		  	})
+	  	}
+
+
+
 		  	
     	
     },
@@ -86,6 +105,7 @@ const store = new Vuex.Store({
 			state.xglist = payload
 		},
 		[MUTATION_rglist]:(state,payload)=>{
+			// console.log(payload)
 			state.rglist = payload
 		},
 		[MUTATION_tjlist]:(state,payload)=>{
@@ -99,8 +119,13 @@ const store = new Vuex.Store({
 			// state.artlist[payload.name]=payload.data;
 			state.currentname = payload.name;
 			var obj = {[payload.name]:payload.data}
-			state.artlist = {...state.artlist,...obj}
-			console.log(state.artlist)
+			if(state.artlist[payload.name] != undefined){
+				state.artlist[payload.name] = [...state.artlist[payload.name],...payload.data];
+			}else{
+				state.artlist = {...state.artlist,...obj}
+			}
+			
+			// console.log(state.artlist)
 		},
 		[MUTATION_area]:(state,payload)=>{
 			state.area = payload;
@@ -110,6 +135,9 @@ const store = new Vuex.Store({
 		},
 		[MUTATION_abc]:(state,payload)=>{
 			state.abc = payload;
+		},
+		[MUTATION_playmusic]:(state,payload)=>{
+			state.playmusic = payload
 		}
 		
 	},
@@ -125,9 +153,13 @@ const store = new Vuex.Store({
 			return state.abc;
 		},
 		filterart:(state)=>{
-			console.log("filter");
-			console.log(state.artlist[state.currentname])
+			// console.log("filter");
+			// console.log(state.artlist)
 			return state.artlist[state.currentname];
+		},
+		playmusiclink:(state)=>{
+			console.log(state.playmusic)
+			return state.playmusic;
 		}
 	}
 })

@@ -16,7 +16,7 @@ export default {
   name: 'app',
   data:function(){
     return{
-        isshow:false
+        isshow:true
     }
   },
   components:{
@@ -139,6 +139,7 @@ input, select {
 .main{
     position: relative;
     top: 44px;
+    padding-bottom: 70px;
 }
 </style>
 <style src="./assets/icon/iconfont.css"></style>

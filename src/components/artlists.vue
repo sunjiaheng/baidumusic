@@ -77,16 +77,22 @@
 				<div>{{singer.name}}</div>
 			</div>
 		</li>
+		<li class="loadmore" @click = "moreclick">查看更多...</li>
 	</ul>
+	<foot></foot>
 </div>
 </template>
 
 <script>
 import {mapState,mapGetters} from "vuex";
+import foot from "./footer2"
 
 export default {
 
   name: 'artlists',
+  components:{
+  	foot
+  },
 
   data () {
     return {
@@ -114,31 +120,34 @@ export default {
   methods:{
   	areaclick(index){
   		this.$store.dispatch("setarea",index);
-  		this.$store.dispatch("getartlist",{"area":index,"sex":this.sex ,"abc":this.abc,"length":"0"});
+  		this.$store.dispatch("getartlist",{"area":index,"sex":this.sex ,"abc":this.abc});
   	},
   	sexclick:function(sex){
   		this.$store.dispatch("setsex",sex);
-  		this.$store.dispatch("getartlist",{"area":this.area,"sex":sex ,"abc":this.abc,"length":"0"});
+  		this.$store.dispatch("getartlist",{"area":this.area,"sex":sex ,"abc":this.abc});
   	},
   	abcclick:function(e){
   		if(e.target.nodeName!='H3'&&this.abcshow){
   			if(e.target.innerText.length<=2&&e.target.innerText!="关闭"){
   				if(e.target.innerText=="热门"){
   					this.$store.dispatch("setabc","");
-  					this.$store.dispatch("getartlist",{"area":this.area,"sex":this.sex,"abc":"","length":"0"});
+  					this.$store.dispatch("getartlist",{"area":this.area,"sex":this.sex,"abc":""});
 
   				}else if(e.target.innerText=="其他"){
   					this.$store.dispatch("setabc","other");
-  					this.$store.dispatch("getartlist",{"area":this.area,"sex":this.sex,"abc":"other","length":"0"});
+  					this.$store.dispatch("getartlist",{"area":this.area,"sex":this.sex,"abc":"other"});
 
   				}else{
 					this.$store.dispatch("setabc",e.target.innerText);
-					this.$store.dispatch("getartlist",{"area":this.area,"sex":this.sex ,"abc":e.target.innerText,"length":"0"});
+					this.$store.dispatch("getartlist",{"area":this.area,"sex":this.sex ,"abc":e.target.innerText});
   				}
   			}
   	
   		}
   		this.abcshow = !this.abcshow
+  	},
+  	moreclick:function(){
+  		this.$store.dispatch("getartlist",{"area":this.area,"sex":this.sex,"abc":this.abc});
   	}
 
   },
@@ -315,6 +324,14 @@ export default {
    			-webkit-box-pack: start;
    			justify-content: flex-start;
 		}
+	}
+	.loadmore{
+		height:44px;
+		line-height: 44px;
+	
+		font-size: 16px;
+		box-pack: center;
+		justify-content: center;
 	}
 }
 
