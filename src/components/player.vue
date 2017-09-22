@@ -10,7 +10,7 @@
 		<li class="iconfont icon-jiantouyou"></li>
 		<li class="iconfont icon-dingdan"></li>
 	</ul>
-	<audio :src="playmusiclink" autobuffer autoloop loop controls></audio>
+	<audio src="http://zhangmenshiting.baidu.com/data2/music/acde8c2f34538234c41893a07945f6b5/540719546/540719546.mp3?xcode=05e0d30fc6f191e1180b9e6dd2675aac"  controls  autoplay></audio>
 </div>
 </template>
 
@@ -72,7 +72,7 @@ export default {
     	}
     }
     audio{
-    	display:none
+    	// display:none
     }
 
 }

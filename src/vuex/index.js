@@ -17,14 +17,14 @@ const store = new Vuex.Store({
     	area: 0,
     	sex : 0,
     	abc : "",
-    	playmusic:""
+    	playmusiclink:""
     },
     actions:{
     	//异步处理
     	// 1  新歌榜
     	getxglist:(store,payload)=>{
     		axios.get("/v1/restserver/ting?method=baidu.ting.billboard.billList&type=1&size=6&offset=0").then(res=>{
-		  		console.log(res.data.song_list)
+		  		// console.log(res.data.song_list)
 		  		store.commit(MUTATION_xglist,res.data.song_list)
 	  		})
     	},
@@ -89,6 +89,7 @@ const store = new Vuex.Store({
 	  	getplaymusic:(store,payload)=>{
 	  		// console.log(payload)
 			axios.get("/v1/restserver/ting?method=baidu.ting.song.playAAC&songid="+payload).then(res=>{
+				console.log(res.data)
 				store.commit(MUTATION_playmusic,res.data.bitrate.file_link)
 				// console.log(res)
 		  	})
@@ -137,7 +138,7 @@ const store = new Vuex.Store({
 			state.abc = payload;
 		},
 		[MUTATION_playmusic]:(state,payload)=>{
-			state.playmusic = payload
+			state.playmusiclink = payload
 		}
 		
 	},
@@ -158,8 +159,8 @@ const store = new Vuex.Store({
 			return state.artlist[state.currentname];
 		},
 		playmusiclink:(state)=>{
-			console.log(state.playmusic)
-			return state.playmusic;
+			console.log(state.playmusiclink)
+			return state.playmusiclink;
 		}
 	}
 })
